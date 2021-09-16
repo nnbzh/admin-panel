@@ -27,7 +27,7 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('users',\App\Http\Controllers\UserController::class, [
     "except" => ['create', 'update', 'store']
-]);
+])->middleware('can:viewAny,view,delete,create','App\Models\User');
 Route::resource('notes',\App\Http\Controllers\NoteController::class, [
     "except" => ['create', 'update']
 ]);

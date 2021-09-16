@@ -31,12 +31,11 @@ class NoteController extends Controller
     }
 
     public function show(Note $note) {
-        if (request()->user()->can('view', $note)) {
-
-            return view('note', ["note" => $note]);
+        if (request()->user()->cannot('view', $note)) {
+            abort(403);
         }
 
-        abort(403);
+        return view('note', ["note" => $note]);
     }
 
     public function store() {
@@ -63,12 +62,11 @@ class NoteController extends Controller
     }
 
     public function destroy(Note $note) {
-        if (request()->user()->can('delete', $note)) {
-            $note->delete();
-
-            return $this->index();
+        if (request()->user()->cannot('delete', $note)) {
+            abort(403);
         }
+        $note->delete();
 
-        abort(403);
+        return $this->index();
     }
 }
