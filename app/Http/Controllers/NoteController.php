@@ -24,7 +24,7 @@ class NoteController extends Controller
             $notes->where('user_id', request()->user()->id);
         }
 
-        return view('notes', [
+        return response()->view('notes', [
             "notes"         => $notes->paginate(10),
             "categories"    => Category::query()->get()
         ]);
@@ -65,8 +65,10 @@ class NoteController extends Controller
         if (request()->user()->cannot('delete', $note)) {
             abort(403);
         }
+
+        Storage::disk('uploads')->delete(preg_replace('/uploads/', '', $note->img_src));
         $note->delete();
 
-        return $this->index();
+        return response()->redirectToRoute('notes.index');
     }
 }

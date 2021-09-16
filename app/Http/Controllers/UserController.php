@@ -9,7 +9,8 @@ class UserController extends Controller
 {
     public function index() {
         $this->authorize('manage', User::class);
-        return view('users', [
+
+        return response()->view('users', [
             'users' => User::query()->with('role:id,name')->paginate(10),
             'roles' => Role::query()->get()
         ]);
@@ -17,7 +18,8 @@ class UserController extends Controller
 
     public function destroy(User $user) {
         $this->authorize('manage', User::class);
+        $user->delete();
 
-        return $this->index();
+        return response()->redirectToRoute('users.index');
     }
 }

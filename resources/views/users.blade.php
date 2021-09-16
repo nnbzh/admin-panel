@@ -111,6 +111,17 @@
                                     <th scope="row">{{ $user->id }}</th>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->role->name }}</td>
+                                    <td>
+                                        @if($user->email !== 'admin@admin.com')
+                                        <div>
+                                            <form method="POST" action="{{ route('users.destroy', ["user" => $user])}}">
+                                                @csrf
+                                                <input type="hidden" name="_method" value="delete" />
+                                                <button type="submit" class="btn btn-danger float-right">DELETE</button>
+                                            </form>
+                                        </div>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>
