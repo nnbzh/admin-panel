@@ -106,7 +106,20 @@
                             @else
                             @foreach($notes as $note)
                                 <li class="list-group-item">
-                                    <a href="{{ route('notes.show', ['note' => $note->id]) }}">{{ $note->title }}</a>
+                                    <div>
+                                        <a href="{{ route('notes.show', ['note' => $note]) }}">{{ $note->title }}</a>
+                                        @if (Auth::user()->hasRole('manager'))
+                                            by
+                                            <a href="{{ route('notes.index', request()->merge(["user_id" => $note->user->id])->all())}}">
+                                                {{$note->user->email}}
+                                            </a>
+                                        @endif
+                                        <form method="POST" action="{{ route('notes.destroy', ["note" => $note])}}">
+                                            @csrf
+                                            <input type="hidden" name="_method" value="delete" />
+                                            <button type="submit" class="btn btn-danger float-right">DELETE</button>
+                                        </form>
+                                    </div>
                                 </li>
                             @endforeach
                                 {{ $notes->links("pagination::bootstrap-4") }}

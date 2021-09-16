@@ -8,8 +8,13 @@
                     <div class="card-header">{{ $note->title}}</div>
                     <div class="card-body">
                         <ul class="list-group">
-                            <li class="list-group-item"><b>Author: </b>{{ $note->user->email }}</a></li>
-                            <li class="list-group-item"><b>Category: </b>{{ $note->category->name }}</a></li>
+                            <li class="list-group-item"><b>Author: </b>{{ $note->user->email }}</li>
+                            <li class="list-group-item">
+                                <b>Category: </b>
+                                <a href="{{ route('notes.index', ['category_id' => $note->category->id]) }}">
+                                    {{ $note->category->name }}
+                                </a>
+                            </li>
                             <li class="list-group-item">
                                 <img alt="" align="center" src="{{ asset("$note->img_src") }}" style="width: 300px; height: 300px;">
                             </li>

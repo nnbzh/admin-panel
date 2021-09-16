@@ -4,18 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Note;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class NoteController extends Controller
 {
     public function index() {
-        $user = Auth::user();
-        if ($user->hasRole('manager')) {
-            $notes = Note::query()->with(['category', 'user']);
-        } else {
-            $notes = $user->notes()->with(['category', 'user']);
+        $notes = Note::query()->with('user');
+
+        if (request()->has('category_id')) {
+            $notes->where('category_id', request()->get('category_id'));
+        }
+
+        if (request()->has('user_id')) {
+            $notes->where('user_id', request()->get('user_id'));
+        }
+
+        if (request()->user()->cannot('viewAny', Note::class)) {
+            $notes->where('user_id', request()->user()->id);
         }
 
         return view('notes', [
@@ -24,14 +30,17 @@ class NoteController extends Controller
         ]);
     }
 
-    public function show($note) {
-        return view('note', [
-            "note" => Note::query()->with('category')->findOrFail($note)
-        ]);
+    public function show(Note $note) {
+        if (request()->user()->can('view', $note)) {
+
+            return view('note', ["note" => $note]);
+        }
+
+        abort(403);
     }
 
     public function store() {
-        $validated = $this->validate(request(), [
+        $this->validate(request(), [
             "title" => "required",
             "category_id" => "required|exists:categories,id",
             "image"       => "required|file|mimes:jpg,jpeg,png,bmp,tiff|max:4096"
@@ -50,6 +59,16 @@ class NoteController extends Controller
             ]
         );
 
-        $this->index();
+        return $this->index();
+    }
+
+    public function destroy(Note $note) {
+        if (request()->user()->can('delete', $note)) {
+            $note->delete();
+
+            return $this->index();
+        }
+
+        abort(403);
     }
 }
