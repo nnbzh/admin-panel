@@ -17,9 +17,10 @@ class NotePolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user, Note $note)
     {
-        return $user->hasRole('manager');
+        return ($user->hasRole('manager') && $note->user()->first()->manager()->first()->id == $user->id)
+            || ($note->user_id == $user->id);
     }
 
     /**

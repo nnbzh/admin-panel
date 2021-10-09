@@ -7,7 +7,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 trait RegistersUsers
 {
@@ -23,7 +22,11 @@ trait RegistersUsers
             abort(403);
         }
 
-        $this->validator($request->all())->validate();
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
 
         event(new Registered($user = $this->create($request->all())));
 

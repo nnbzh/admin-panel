@@ -65,7 +65,7 @@
 
                                                     <div class="col-md-6">
                                                         <input id="category_id" type="hidden"
-                                                               class="form-control @error('image') is-invalid @enderror"
+                                                               class="form-control @error('category_id') is-invalid @enderror"
                                                                name="category_id"
                                                                value="{{ old('category_id') }}" required>
 
@@ -80,6 +80,7 @@
                                                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                             @endforeach
                                                         </select>
+                                                        @error('category_id') {{var_dump("$message")}} @enderror
                                                     </div>
                                                 </div>
 
@@ -105,6 +106,7 @@
                                 <div align="center" >No notes found.</div>
                             @else
                             @foreach($notes as $note)
+                                @can('view-any', $note)
                                 <li class="list-group-item">
                                     <div>
                                         <a href="{{ route('notes.show', ['note' => $note]) }}">{{ $note->title }}</a>
@@ -121,6 +123,7 @@
                                         </form>
                                     </div>
                                 </li>
+                                @endcan
                             @endforeach
                                 {{ $notes->links("pagination::bootstrap-4") }}
                             @endif

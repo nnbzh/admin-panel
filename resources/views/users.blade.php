@@ -72,11 +72,15 @@
                                                                         inp.value = sel.value;
                                                             }
                                                             setRole(this)">
-                                                                <option selected>Open this select menu</option>
+                                                                <option selected value=0>Open this select menu</option>
                                                                 @foreach($roles as $role)
                                                                     <option value="{{ $role->id }}">{{ $role->name }}</option>
                                                                 @endforeach
                                                             </select>
+
+                                                            @error('role_id')
+                                                                {{var_dump("$message")}}
+                                                            @enderror
                                                         </div>
                                                     </div>
 
@@ -107,6 +111,7 @@
                             </thead>
                             <tbody>
                             @foreach($users as $user)
+                                @can('view-any', $user)
                                 <tr>
                                     <th scope="row">{{ $user->id }}</th>
                                     <td>{{ $user->email }}</td>
@@ -123,6 +128,7 @@
                                         @endif
                                     </td>
                                 </tr>
+                                @endcan
                             @endforeach
                             </tbody>
                         </table>

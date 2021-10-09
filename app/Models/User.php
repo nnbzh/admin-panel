@@ -22,7 +22,8 @@ class User extends Authenticatable
     protected $fillable = [
         'email',
         'password',
-        'role_id'
+        'role_id',
+        'manager_id'
     ];
 
     /**
@@ -57,6 +58,10 @@ class User extends Authenticatable
     public function notes(): HasMany
     {
         return $this->hasMany(Note::class);
+    }
+
+    public function manager() {
+        return $this->hasOne(User::class, 'id', 'manager_id');
     }
 
 }
